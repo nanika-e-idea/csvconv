@@ -1,10 +1,21 @@
 <template>
     <div class="file_up">
-        <div class="droparea">
-            ここにドラッグ＆ドロップ
+        <div class="droparea"　@dragenter="onFileDrop">
+            ここにドロップ
         </div>
     </div>
 </template>
+<script>
+export default{
+    methods: {
+        onFileDrop() {
+            console.log('Some File was droped!');
+            return false;
+        }
+    }
+}
+</script>
+
 <style type="scss">
     .file_up{
         display: flex;
