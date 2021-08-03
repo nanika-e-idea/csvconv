@@ -21,6 +21,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-
+        font-size: 40px;
+        font-weight: 600;
+        color: #aaa;
     }
 </style>
