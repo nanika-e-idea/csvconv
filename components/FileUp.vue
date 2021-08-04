@@ -1,6 +1,11 @@
 <template>
   <div class="file_up">
-    <div class="droparea" :class="{'enter': this.isEnter}" @click="clickEvent" @dragover.prevent="dragOver" @drop.stop="dropFile">
+    <div class="droparea" 
+    :class="{'enter': this.onDrag}" 
+    @dragenter="dragEnter" 
+    @dragleave="dragLeave" 
+    @dragover.prevent 
+    @drop.prevent.stop="dropFile">
       Step1.CSVファイルをここにドロップ
     </div>
   </div>
@@ -8,39 +13,38 @@
 
 <script>
 export default{
-  data: {
-      isEnter: false,
+  data(){
+    return{
+      onDrag: false,
+      files: [],
+      filename: null,
+      datalength: null,
+    };
+  },
+  mounted(){
+    //this.$emit('file-object', this.Files);
   },
   methods: {
     clickEvent() {
-      if(this.isEnter == true){
-        this.isEnter = false;
-      }else{
-        this.isEnter = true;
-      }
-      console.log(this.isEnter);
-    },
-    dragOver() {
-      console.log('EVENT[dragOver]');
-      this.isEnter = true;
       return;
     },
-    dragLeave() {
-      console.log('EVENT[dragLeave]');
-      this.isEnter = false;
+    dragEnter() {
+      //console.log('EVENT[dragEnter]');
+      this.onDrag = true;
     },
-    dropFile(event) {
-      console.log('EVENT[dropFile]');
-      this.isEnter = false;
-      const files = event.dataTransfer.files;
-      return　 false;
-      //ToDo ファイル種別チェック
-      
-      //Todo 行ごとに配列に格納
-
-      //１行目、カンマで分割して、重複判定カラム位置取得、出力ファイル先頭行生成
-
-      //２行目以降、判定カラムの値で出力ファイル書き出し判定
+    dragLeave() {
+      //console.log('EVENT[dragLeave]');
+      this.onDrag = false;
+    },
+    dropFile(e) {
+      //console.log('EVENT[drpFile]');
+      //console.log( e.dataTransfer.files);
+      this.onDrag = false;
+      this.files = [ ...e.dataTransfer.files];
+      //ファイル名取得
+      this.filename = this.files[0].name
+      console.log('[FileUp]file:' + this.filename);
+      this.$emit('file-object', this.files);
     },
   },
 }
