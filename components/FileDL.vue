@@ -1,6 +1,6 @@
 <template>
   <div class="file_dl">
-      <button type="button" class="btn btn_dl">整形済みCSVファイルをダウンロードする</button>
+      <button type="button" class="btn btn_dl">Step2.整形済みCSVファイルをダウンロードする</button>
   </div>
 </template>
 <style type="scss">
