@@ -22,9 +22,9 @@ export default Vue.extend({
         'datalength': null,
         'corectedlength': null
       },
-      buff: null,
-      sjisArray: null,
-      unicodeArray: null,
+      //buff: null,
+      //sjisArray: null,
+      //unicodeArray: null,
     }
   },
   methods: {
@@ -36,22 +36,23 @@ export default Vue.extend({
       const encoding = require('encoding-japanese');
       const reader = new FileReader();
       
-      reader.readAsArrayBuffer(file);
-      //this.buff = reader.result;
-      //reader.readAsText(file);
-      reader.onload = () => {
+      
+      reader.onload = function() {
         //let str = reader.result;
-        //console.log(str);
-        this.buff = reader.result;
-        this.sjisArray = new Uint8Array(this.buff);
-        this.unicodeArray = encoding.convert(this.sjisArray, {
+        //console.log(reader.result);
+        //var buff = new ArrayBuffer(8);
+        var sjisArray = new Uint8Array(reader.result);
+        var unicodeArray = encoding.convert(sjisArray, {
           to: 'UNICODE',
           from: 'SJIS',
           type: 'string'
         });
-        this.databody = this.unicodeArray;
+        this.databody = unicodeArray;
         console.log(this.databody);
-      }
+      };
+
+      reader.readAsArrayBuffer(file);
+      //reader.readAsText(file);
       
 
       //sjis>>unicode
