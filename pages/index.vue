@@ -30,17 +30,16 @@ export default Vue.extend({
   methods: {
     fileObject(files: []){
       this.files = files;
+      let file= this.files[0];
       //console.log('[index]file:' + this.files[0].name);
-      let file = this.files[0];
       
-      const encoding = require('encoding-japanese');
-      const reader = new FileReader();
+      const reader: any = new FileReader();
       
+      reader.readAsArrayBuffer(file);
+      //reader.readAsText(file);
       
       reader.onload = function() {
-        //let str = reader.result;
-        //console.log(reader.result);
-        //var buff = new ArrayBuffer(8);
+        const encoding = require('encoding-japanese');
         var sjisArray = new Uint8Array(reader.result);
         var unicodeArray = encoding.convert(sjisArray, {
           to: 'UNICODE',
@@ -51,12 +50,6 @@ export default Vue.extend({
         console.log(this.databody);
       };
 
-      reader.readAsArrayBuffer(file);
-      //reader.readAsText(file);
-      
-
-      //sjis>>unicode
-      //var str = reader.result;
       
 
       //行ごとに分解

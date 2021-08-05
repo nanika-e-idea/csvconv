@@ -15,6 +15,14 @@ $ yarn start
 
 # generate static project
 $ yarn generate
+
+# firebase login
+$ yarn firebase login
+
+copy URL and access login page
+
+get authorization code
+
 ```
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
