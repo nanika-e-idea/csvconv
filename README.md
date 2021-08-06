@@ -18,10 +18,10 @@ $ yarn generate
 
 # firebase login
 $ yarn firebase login
-
-copy URL and access login page
-
-get authorization code
+ copy URL and access login page
+ get authorization code
+ 他、firebaseコマンドは頭にyarnを付けることに留意
+ 
 
 ```
 
