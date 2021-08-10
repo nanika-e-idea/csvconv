@@ -53,13 +53,13 @@ export default Vue.extend({
         //ここからセル内改行対応
         var separator = '\t';
         var columnSize = this.databody.split(/\r\n|\r|\n/)[0].split(separator).length;
-        var chars = Array.form(this.databody.replace(/\r\n|\r|\n/g, '\n'));
+        var chars = Array.from(this.databody.replace(/\r\n|\r|\n/g, '\n'));
         var csvList = [];
         var list = [];
         var queteOpenFlg = false;
         var buf = "";
         for (var i = 0; i < chars.length; i++){
-          console.log(columnSize);
+          //console.log(columnSize);
           if(chars[i] == '"') {
             queteOpenFlg = queteOpenFlg == false;
           } else {
@@ -75,8 +75,8 @@ export default Vue.extend({
             }
           }
         }
-        console.log(csvList[0][0]);
-        var csv = {};
+        //console.log(csvList[0][0]);
+        var csv: any = {};
         csv.dataList = [];
         for (var i = 0; i < csvList.length; i++) {
           if(i == 0) {
@@ -86,36 +86,39 @@ export default Vue.extend({
           }
         }
         //ここまでセル内改行対応
-        //var rows = this.databody.split(/\r\n|\r|\n/);
+
         //判定用カラム検索
-        var headarr = rows[0].split(',');
+        var headarr = csvList[0][0].split(',');
         var ckcolumn = 0;
         for (var i = 0; i < headarr.length; i++){
+          //console.log(headarr[i]);
           if(headarr[i] == '適用終了日'){
             ckcolumn = i;
             break;
           }
         }
-        console.log('ckcolumn: ' + ckcolumn);
+        //console.log('ckcolumn: ' + ckcolumn);
+
         //重複データ削除
-        var rerows = [];
-        rerows[0] = rows[0];
+        var newrows = [];
+        newrows[0] = csvList[0][0];
         var step = 1;
-        for (var i = 1; i < rows.length; i++){
-          console.log(rows[i]);
-          var arr = rows[i].split(',');
-          if (arr[ckcolumn] = ''){
-            rerows[step] = rows[i];
+        for (var i = 1; i < csvList.length; i++){
+          var arr = csvList[i][0].split(',');
+          //console.log(arr[ckcolumn]);
+          if (!arr[ckcolumn]){
+            newrows[step] = csvList[i][0];
             step++;
-          }
-        }
-        //console.log('datalegth: ' + parseInt(rows.length - 1) + ' >> ' + parseInt(rerows.length - 1));
+          } //end if
+        } //end for
+        
         //ファイル名、件数取得
-        //console.log('fileinfo: ' + this.fileinfo);
         this.fileinfo = {
           filename : file.name,
-          datalength: rows.length - 1,
+          datalength: csvList.length - 1,
+          corectedlength: newrows.length -1,
         };
+        this.newdata = newrows;
         //this.fileinfo.filename = file.name;
         //this.fileinfo.datalength = rows.length;
         console.log(this.fileinfo);
@@ -129,10 +132,6 @@ export default Vue.extend({
       //this.fileinfo.datalength = rows.length -1;
 
       };
-
-      
-
-
       
     },
   },
