@@ -16,7 +16,6 @@ export default Vue.extend({
   data(){
     return{
       files: [],
-      //filename: '',
       databody: '',
       fileinfo: {
         filename: 'hoge' as String,
@@ -24,6 +23,7 @@ export default Vue.extend({
         corectedlength: 0 as Number,
       },
       newdata: '',
+      filestatus: 'Empty',
       //buff: null,
       //sjisArray: null,
       //unicodeArray: null,
@@ -36,7 +36,8 @@ export default Vue.extend({
       //console.log('[index]file:' + this.files[0].name);
       
       const reader: any = new FileReader();
-      
+      const _this = this;
+
       reader.readAsArrayBuffer(file);
       //reader.readAsText(file);
       
@@ -48,22 +49,21 @@ export default Vue.extend({
           from: 'SJIS',
           type: 'string'
         });
-        this.databody = unicodeArray;
+        _this.databody = unicodeArray;
         //console.log(this.databody);
 
-        //行ごとに分割
         //ここからセル内改行対応
         var separator = '\t';
-        var columnSize = this.databody.split(/\r\n|\r|\n/)[0].split(separator).length;
-        var chars = Array.from(this.databody.replace(/\r\n|\r|\n/g, '\n'));
+        var columnSize = _this.databody.split(/\r\n|\r|\n/)[0].split(separator).length;
+        //一文字ずつに分解
+        var chars = Array.from(_this.databody.replace(/\r\n|\r|\n/g, '\n'));
         var csvList = [];
         var list = [];
         var queteOpenFlg = false;
         var buf = "";
         for (var i = 0; i < chars.length; i++){
-          //console.log(columnSize);
           if(chars[i] == '"') {
-            queteOpenFlg = queteOpenFlg == false;
+            queteOpenFlg = queteOpenFlg == false;　//booleanのトグル処理
           } else {
             if((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
               list.push(buf);
@@ -75,65 +75,98 @@ export default Vue.extend({
             } else {
               buf += chars[i];
             }
-          }
-        }
-        //console.log(csvList[0][0]);
+          } //end if
+        } //end for
+        console.log(csvList[0][0]);
         var csv: any = {};
         csv.dataList = [];
         for (var i = 0; i < csvList.length; i++) {
-          if(i == 0) {
+          if (i == 0) {
             csv.header = csvList[i];
           } else {
             csv.dataList.push(csvList[i]);
           }
         }
-        //ここまでセル内改行対応
 
-        //判定用カラム検索
-        var headarr = csvList[0][0].split(',');
         var ckcolumn = 0;
-        for (var i = 0; i < headarr.length; i++){
-          //console.log(headarr[i]);
-          if(headarr[i] == '適用終了日'){
+        var strcsv: string = '';
+        var step = 0;
+        var str = '';
+        var line : any = csvList[0][0].split(',');
+        for ( var i = 0; i < line.length; i++) {
+          if (line[i] == '適用終了日'){
             ckcolumn = i;
-            break;
+          }
+          str += line[i];
+          if (i < line.length - 1){
+            str += ',';
+          } else {
+            str += '\n';
           }
         }
-        //console.log('ckcolumn: ' + ckcolumn);
-
-        //重複データ削除
-        var newrows = [];
-        newrows[0] = csvList[0][0];
-        var step = 1;
-        for (var i = 1; i < csvList.length; i++){
-          var arr = csvList[i][0].split(',');
-          //console.log(arr[ckcolumn]);
-          if (!arr[ckcolumn]){
-            newrows[step] = csvList[i][0];
+        strcsv += str;
+        for (var i = 1; i < csvList.length; i++) {
+          str = '';
+          line = csvList[i][0].split(',');
+          //console.log(line[ckcolumn]);
+          if (line[ckcolumn] == ''){
+            for (var j = 0; j < line.length; j++) {
+              var ckrow: any = line[j].split('\n');
+              //console.log(ckrow.length); 
+              if(ckrow.length > 1){
+                str += '"' + line[j] + '"';
+              }else{
+                str += line[j];
+              }
+              if (j < line.length - 1){
+                str += ',';
+              } else {
+                str += '\n';
+              }
+            }
             step++;
-          } //end if
-        } //end for
+            //console.log('step' + step);
+          }
+          //console.log(str);
+          strcsv += str;
+        }
+        console.log(strcsv);
+        //ここまでセル内改行対応
+        var test = 'テスト';
+
+        var str2array = function(str:string) {
+            var array = [],i,il=str.length;
+            for(i=0;i<il;i++) array.push(str.charCodeAt(i));
+            return array;
+        };
+
+        var resultArray = new Uint8Array(str2array(test));
+        var returnArray = encoding.convert(resultArray, 'SJIS');
+        var returnstr: string = encoding.codeToString( returnArray );
         
         //ファイル名、件数取得
-        this.fileinfo = {
+        _this.fileinfo = {
           filename : file.name,
           datalength: csvList.length - 1,
-          corectedlength: newrows.length -1,
+          corectedlength: step,
         };
-        this.newdata = newrows;
+        _this.newdata = returnstr;
         //this.fileinfo.filename = file.name;
         //this.fileinfo.datalength = rows.length;
-        console.log(this.fileinfo);
+        console.log(_this.fileinfo);
         //console.log(this.databody);
+        _this.filestatus = 'Standby';
       };
+        //this.filestatus = 'Error';
     },
     fileDL(){
-      var datastream = '';
-      for (var i = 0; i < this.databody.length; i++){
-        datastream += this.databody[i] + '\r\n';
-      };
-      console.log(datastream);
-      console.log(this.fileinfo);
+      let blob = new Blob([this.newdata],{type:"text/plan"});
+      let link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'corrected_' + this.fileinfo.filename;
+      link.click();
+      //console.log(datastream);
+      //console.log(this.fileinfo);
     },
   },
 })
