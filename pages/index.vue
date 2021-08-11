@@ -3,7 +3,9 @@
     <h1>CSV preconverter</h1>
     <FileUp @file-object="fileObject($event, files)" />
     <DataCount/>
-    <FileDL/>
+    <div class="file_dl">
+      <button type="button" class="btn btn_dl" @click="fileDL">Step2.整形済みCSVファイルをダウンロードする</button>
+    </div>
   </div>
 </template>
 
@@ -123,17 +125,37 @@ export default Vue.extend({
         //this.fileinfo.datalength = rows.length;
         console.log(this.fileinfo);
         //console.log(this.databody);
-      
-      //var rows = files[0].data.split(/\r\n|\n/);
-      //for(var i = 0; i < rows.length; i++){
-      //
-      //}
-      
-      //this.fileinfo.datalength = rows.length -1;
-
       };
-      
+    },
+    fileDL(){
+      var datastream = '';
+      for (var i = 0; i < this.databody.length; i++){
+        datastream += this.databody[i] + '\r\n';
+      };
+      console.log(datastream);
+      console.log(this.fileinfo);
     },
   },
 })
 </script>
+
+<style>
+/**fileDL**/
+  .file_dl{
+      width: 100%;
+      text-align: center;
+  }
+  .btn_dl{
+      box-sizing: border-box;
+      width: 900px;
+      height: 50px;
+      max-width: 90%;
+      border: none;
+      border-radius: 25px;
+      background-color: #29a;
+      font-size: 20px;
+      font-weight: 600;
+      color:white;
+      filter:drop-shadow(2px 2px 1px rgba(0,0,0,0.5)); 
+  }
+</style>
