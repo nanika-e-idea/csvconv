@@ -132,7 +132,10 @@ export default Vue.extend({
         }
         console.log(strcsv);
         //ここまでセル内改行対応
-        var test = 'テスト';
+
+        /**test code
+        var test = 'abc,てすと,テ,ス,ト\ntest,"テスト",123,\n';
+        **/
 
         var str2array = function(str:string) {
             var array = [],i,il=str.length;
@@ -140,10 +143,8 @@ export default Vue.extend({
             return array;
         };
 
-        var resultArray = new Uint8Array(str2array(test));
-        var returnArray = encoding.convert(resultArray, 'SJIS');
-        var returnstr: string = encoding.codeToString( returnArray );
-        
+        var returnArray = encoding.convert(str2array(strcsv), 'SJIS', 'UNICODE');
+        var returnstr: any = new Uint8Array( returnArray );
         //ファイル名、件数取得
         _this.fileinfo = {
           filename : file.name,
