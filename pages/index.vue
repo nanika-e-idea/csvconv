@@ -2,7 +2,7 @@
   <div class="main">
     <h1>CSV preconverter</h1>
     <FileUp @file-object="fileObject($event, files)" />
-    <DataCount/>
+    <DataCount :fileinfo="fileinfo" />
     <div class="file_dl">
       <button type="button" class="btn btn_dl" @click="fileDL">Step2.整形済みCSVファイルをダウンロードする</button>
     </div>
@@ -18,15 +18,12 @@ export default Vue.extend({
       files: [],
       databody: '',
       fileinfo: {
-        filename: 'hoge' as String,
+        filename: '---' as String,
         datalength: 0 as Number,
         corectedlength: 0 as Number,
       },
       newdata: '',
       filestatus: 'Empty',
-      //buff: null,
-      //sjisArray: null,
-      //unicodeArray: null,
     }
   },
   methods: {

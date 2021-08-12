@@ -3,7 +3,7 @@
       <button type="button" class="btn btn_dl">Step2.整形済みCSVファイルをダウンロードする</button>
   </div>
 </template>
-<style type="scss">
+<style lang="scss">
   .file_dl{
       width: 100%;
       text-align: center;

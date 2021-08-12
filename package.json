@@ -9,11 +9,15 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.1.0",
     "core-js": "^3.15.1",
     "encoding-japanese": "^1.0.30",
     "firebase-tools": "^9.16.0",
+    "node-sass": "^6.0.1",
     "nuxt": "^2.15.7",
-    "save-dev": "^0.0.1-security"
+    "sass-loader": "10",
+    "save-dev": "^0.0.1-security",
+    "scss-loader": "^0.0.1"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.7",
