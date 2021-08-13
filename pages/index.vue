@@ -51,6 +51,7 @@ export default Vue.extend({
 
         //ここからセル内改行対応
         var separator = '\t';
+        var altcomma = '[%~{/comma/}~%]';
         var columnSize = _this.databody.split(/\r\n|\r|\n/)[0].split(separator).length;
         //一文字ずつに分解
         var chars = Array.from(_this.databody.replace(/\r\n|\r|\n/g, '\n'));
@@ -60,7 +61,8 @@ export default Vue.extend({
         var buf = "";
         for (var i = 0; i < chars.length; i++){
           if(chars[i] == '"') {
-            queteOpenFlg = queteOpenFlg == false;　//booleanのトグル処理
+            queteOpenFlg = queteOpenFlg == false;　//フラグのトグル処理
+            buf += chars[i]; //ダブルクオートも文字列として書き出し
           } else {
             if((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
               list.push(buf);
@@ -69,6 +71,9 @@ export default Vue.extend({
                 csvList.push(list);
                 list = [];
               }
+            } else if (chars[i] == ',' && queteOpenFlg){
+              //ダブルクオート内のカンマ置き換え
+              buf += altcomma;
             } else {
               buf += chars[i];
             }
@@ -108,16 +113,11 @@ export default Vue.extend({
         for (var i = 1; i < csvList.length; i++) {
           str = '';
           line = csvList[i][0].split(',');
-          console.log(i + ': ' + line[ckcolumn]);
+          //console.log(i + ': ' + line[ckcolumn]);
+          
           if (line[ckcolumn] == ''){
             for (var j = 0; j < line.length; j++) {
-              var ckrow: any = line[j].split('\n');
-              //console.log(ckrow.length); 
-              if(ckrow.length > 1){
-                str += '"' + line[j] + '"';
-              }else{
-                str += line[j];
-              }
+              str += line[j].replace(altcomma, ',');
               if (j < line.length - 1){
                 str += ',';
               } else {
@@ -126,11 +126,11 @@ export default Vue.extend({
             }
             step++;
             //console.log('step' + step);
-          } else {
-            console.log('List[' + i + ']');
-            for (var j = 0; j < line.length; j++){
-              console.log(j + ': ' + line[j]);
-            }
+          //} else {
+          //  console.log('List[' + i + ']');
+          //  for (var j = 0; j < line.length; j++){
+          //    console.log(j + ': ' + line[j]);
+          //  }
           }
           //console.log(str);
           strcsv += str;
