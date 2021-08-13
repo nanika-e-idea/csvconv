@@ -84,13 +84,16 @@ export default Vue.extend({
             csv.dataList.push(csvList[i]);
           }
         }
-
+        //ここまでセル内改行対応
+        
+        //重複判定　適用終了日に値があれば、重複と判定
         var ckcolumn = 0;
         var strcsv: string = '';
         var step = 0;
         var str = '';
         var line : any = csvList[0][0].split(',');
         for ( var i = 0; i < line.length; i++) {
+          console.log('line[' + i + '] ' + line[i]);
           if (line[i] == '適用終了日'){
             ckcolumn = i;
           }
@@ -105,7 +108,7 @@ export default Vue.extend({
         for (var i = 1; i < csvList.length; i++) {
           str = '';
           line = csvList[i][0].split(',');
-          //console.log(line[ckcolumn]);
+          console.log(i + ': ' + line[ckcolumn]);
           if (line[ckcolumn] == ''){
             for (var j = 0; j < line.length; j++) {
               var ckrow: any = line[j].split('\n');
@@ -123,12 +126,16 @@ export default Vue.extend({
             }
             step++;
             //console.log('step' + step);
+          } else {
+            console.log('List[' + i + ']');
+            for (var j = 0; j < line.length; j++){
+              console.log(j + ': ' + line[j]);
+            }
           }
           //console.log(str);
           strcsv += str;
         }
         console.log(strcsv);
-        //ここまでセル内改行対応
 
         /**test code
         var test = 'abc,てすと,テ,ス,ト\ntest,"テスト",123,\n';
