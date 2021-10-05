@@ -58,10 +58,21 @@ export default Vue.extend({
         var csvList = [];
         var list = [];
         var queteOpenFlg = false;
+        var tagOpenFlg = false;
         var buf = "";
         for (var i = 0; i < chars.length; i++){
+          if(chars[i] == '<') {
+            console.log('tag Open');
+              tagOpenFlg = true;
+          }
+          if(chars[i] == '>') {
+            console.log('tag Close');
+              tagOpenFlg = false;
+          }
           if(chars[i] == '"') {
-            queteOpenFlg = queteOpenFlg == false;　//フラグのトグル処理
+            if(!tagOpenFlg){ //<>の内側なら無視
+              queteOpenFlg = queteOpenFlg == false;　//フラグのトグル処理
+            }
             buf += chars[i]; //ダブルクオートも文字列として書き出し
           } else {
             if((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
