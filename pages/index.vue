@@ -58,24 +58,30 @@ export default Vue.extend({
         var csvList = [];
         var list = [];
         var queteOpenFlg = false;
-        var tagOpenFlg = false;
+        //var tagOpenFlg = false;
+        var queteEscapeFlg = false;
         var buf = "";
         for (var i = 0; i < chars.length; i++){
-          if(chars[i] == '<') {
-            console.log('tag Open');
-              tagOpenFlg = true;
-          }
-          if(chars[i] == '>') {
-            console.log('tag Close');
-              tagOpenFlg = false;
-          }
-          if(chars[i] == '"') {
-            if(!tagOpenFlg){ //<>の内側なら無視
-              queteOpenFlg = queteOpenFlg == false;　//フラグのトグル処理
+          //if(chars[i] == '<') {
+          //  console.log('tag Open');
+          //    tagOpenFlg = true;
+          //}
+          //if (chars[i] == '>') {
+          //  console.log('tag Close');
+          //    tagOpenFlg = false;
+          //}
+          if (chars[i] == '"') {
+            if (!queteOpenFlg && !queteEscapeFlg){
+              queteOpenFlg = true;
+            } else if (queteOpenFlg && !queteEscapeFlg){
+              queteEscapeFlg = true;
+            } else if (queteOpenFlg && queteEscapeFlg){
+              queteEscapeFlg = false;
             }
             buf += chars[i]; //ダブルクオートも文字列として書き出し
           } else {
-            if((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
+            if ((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
+              console.log(buf);
               list.push(buf);
               buf = "";
               if (list.length == columnSize) {
@@ -83,11 +89,17 @@ export default Vue.extend({
                 list = [];
               }
             } else if (chars[i] == ',' && queteOpenFlg){
-              //ダブルクオート内のカンマ置き換え
-              buf += altcomma;
+              if (!queteEscapeFlg){
+                //ダブルクオート内のカンマ置き換え
+                buf += altcomma;
+              } else {
+                queteOpenFlg = false;
+                buf += chars[i];
+              }
             } else {
               buf += chars[i];
             }
+            queteEscapeFlg = false;
           } //end if
         } //end for
         console.log(csvList[0][0]);
