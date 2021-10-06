@@ -71,24 +71,17 @@ export default Vue.extend({
           //    tagOpenFlg = false;
           //}
           if (chars[i] == '"') {
-            if (!queteOpenFlg && !queteEscapeFlg){
+            if (!queteOpenFlg){
               queteOpenFlg = true;
-            } else if (queteOpenFlg && !queteEscapeFlg){
+              queteEscapeFlg = false;
+            } else if (!queteEscapeFlg){
               queteEscapeFlg = true;
-            } else if (queteOpenFlg && queteEscapeFlg){
+            } else{
               queteEscapeFlg = false;
             }
             buf += chars[i]; //ダブルクオートも文字列として書き出し
           } else {
-            if ((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
-              console.log(buf);
-              list.push(buf);
-              buf = "";
-              if (list.length == columnSize) {
-                csvList.push(list);
-                list = [];
-              }
-            } else if (chars[i] == ',' && queteOpenFlg){
+            if (chars[i] == ',' && queteOpenFlg){
               if (!queteEscapeFlg){
                 //ダブルクオート内のカンマ置き換え
                 buf += altcomma;
@@ -96,7 +89,17 @@ export default Vue.extend({
                 queteOpenFlg = false;
                 buf += chars[i];
               }
-            } else {
+            }
+            else if ((chars[i] == separator || chars[i] == '\n') && !queteOpenFlg) {
+              console.log(buf);
+              list.push(buf);
+              buf = "";
+              if (list.length == columnSize) {
+                csvList.push(list);
+                list = [];
+              }
+            } 
+            else {
               buf += chars[i];
             }
             queteEscapeFlg = false;
