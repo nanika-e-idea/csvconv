@@ -141,7 +141,7 @@ export default Vue.extend({
           line = csvList[i][0].split(',');
           //console.log(i + ': ' + line[ckcolumn]);
           
-          if (line[ckcolumn] == ''){
+          if (line[ckcolumn] == '' || line[ckcolumn] == '""'){
             for (var j = 0; j < line.length; j++) {
               str += line[j].replace(altcomma, ',');
               if (j < line.length - 1){
